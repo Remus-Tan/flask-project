@@ -14,3 +14,8 @@ If you wish to run this, follow these steps:
   ```
   These can be found by creating a Reddit account, going to the account preferences section and creating an app (personal script)
   <li>Run "flask_site.py"
+  <li>If you are missing any of the required modules, open command prompt in this directory and run:
+  
+  ```
+  pip install -r requirements.txt
+  ```
