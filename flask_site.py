@@ -25,7 +25,7 @@ def load_user(email):
     return App_user.get_user_by_Id(email)
 
 # Replace this with your own MongoDB Atlas Database or local MongoDB server
-mongo = MongoClient('mongodb+srv://test:test@cluster0.qy02jxs.mongodb.net/?retryWrites=true&w=majority')
+mongo = MongoClient('<MongoDB URI goes here>')
 db = mongo.db01
 collection = db['user_info']
 
