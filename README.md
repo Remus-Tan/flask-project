@@ -4,7 +4,7 @@ This is a simple web app project using Flask, BootStrap and jQuery to get some b
 
 If you wish to run this, follow these steps:
 <ol>
-  <li>Create a file called "SuperSecretCredentials.txt"
+  <li>Create a file called "SuperSecretCredentials.txt" and place it in the root folder alongside "flask_site.py"
   <li>Insert the following into the file:
   
   ```
