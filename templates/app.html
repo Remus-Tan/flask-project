@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block content %}
+<label for="basic-url" class="mb-3 mt-3">Enter a subreddit to find out what people are discussing:</label>
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon3">www.reddit.com/r/</span>
+  </div>
+  <input type="text" class="form-control" name="subreddit" id="subreddit" placeholder="subreddit" aria-describedby="basic-addon3">
+  <div class="input-group-append">
+    <button class="btn btn-warning" id="scrape-btn" disabled>Scrape!</button>
+  </div>
+</div>
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon3">Posts to search</span>
+  </div>
+  <input type="number" class="form-control" name="posts" id="posts" min="1" max="100" placeholder="25">
+  <div class="col"></div>
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon3">Words to show</span>
+  </div>
+  <input type="number" class="form-control" name="limit" id="limit" min="1" max="30" placeholder="15">
+</div>
+<div class="content-section">  
+  <div class="container">
+    <canvas id="redditChart" width="400" height="250"></canvas>
+  </div>
+</div>
+{% endblock content %}
+{% block login %}
+  {% if current_user.is_authenticated %}
+    <div class="content-section text-center">
+      <h4>You are currently logged in as:</h4>
+      <h5 class='text-muted'>{{ current_user._email }}</h5>
+    </div>
+    {% else %}
+    <div class="content-section text-center">
+      <h3>You are not signed in!</h3>
+    </div>
+  {% endif %}
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+      <div class="alert alert-success" role="alert">{{ messages[0] }}</div>
+  {% endif %}
+  {% endwith %}
+{% endblock login %}

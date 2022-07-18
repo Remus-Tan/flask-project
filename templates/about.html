@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+  <div class="container">
+    <h3 class="article-title mt-3">Hello!</h3>
+    <p class="article-content">
+      This Web App allows you to scrape any public subreddit and perform some basic analysis.
+      Please proceed to the login page to continue.
+    </p>
+  </div>
+</div>
+{% endblock content %}
+{% block login %}
+  {% if current_user.is_authenticated %}
+    <div class="content-section text-center">
+      <h4>You are currently logged in as:</h4>
+      <h5 class='text-muted'>{{ current_user._email }}</h5>
+    </div>
+    {% else %}
+    <div class="content-section text-center">
+      <h3>You are not signed in!</h3>
+    </div>
+  {% endif %}
+{% endblock login %}
