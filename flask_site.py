@@ -15,6 +15,7 @@ nltk.download('stopwords')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Unga Bunga Secret Key'
 
+
 # User authentication ------------------------------------------------------------------------------------------------#
 login_manager = LoginManager()
 login_manager.login_view = '/login'
@@ -24,8 +25,23 @@ login_manager.init_app(app)
 def load_user(email):
     return App_user.get_user_by_Id(email)
 
-# Replace this with your own MongoDB Atlas Database or local MongoDB server
-mongo = MongoClient('<MongoDB URI goes here>')
+
+# Praw functions ------------------------------------------------------------------------------------------------#
+file = open('SuperSecretCredentials.txt', 'r')
+
+client_id = file.readline().strip()
+client_secret = file.readline().strip()
+user_agent = file.readline().strip()
+
+reddit = praw.Reddit(
+    client_id=client_id,
+    client_secret=client_secret,
+    user_agent=user_agent
+)
+
+
+# MongoDB ------------------------------------------------------------------------------------------------#
+mongo = MongoClient(file.readline().strip())
 db = mongo.db01
 collection = db['user_info']
 
@@ -105,26 +121,31 @@ def logout():
     flash('You have logged out of the system')
     return redirect(url_for('login'))
 
-@app.route('/')  
 @app.route('/app')  
 @login_required
 def web_app():
     return render_template('app.html')
 
+@app.route('/')  
 @app.route('/about')
 def about():
     return render_template('about.html', title='About')
 
 @app.route('/scrape_ajax')
 def scrape_ajax():
-    
-    try:
-        posts_count = 100 if int(request.args.get('posts_input')) >= 100 else int(request.args.get('posts_input')) # Top X words to show, default to 25 if user did not input
-        limit = 30 if int(request.args.get('limit_input')) >= 30 else int(request.args.get('limit_input')) # Top X words to show, default to 15 if user did not input
-    except Exception as e:
-        print(e)
-        posts_count = 25
-        limit = 15
+    posts = request.args.get('posts_input')
+    words = request.args.get('limit_input')
+
+    if not posts:
+        posts = 25
+    else:
+        posts = int(posts) if int(posts) <= 100 else 100
+
+    if not words:
+        words = 15
+    else:
+        words = int(words) if int(words) <= 30 else 30
+
 
     counter = {}
     sorted_keys = []
@@ -133,11 +154,13 @@ def scrape_ajax():
     posts_by_date = {}
 
     input_sub = request.args.get('subreddit_input')
-    hot_posts = reddit.subreddit(input_sub).hot(limit=posts_count)
+    hot_posts = reddit.subreddit(input_sub).hot(limit=posts)
     stoplist = set(stopwords.words('english') + list(punctuation) + list(digits))
     
+    print(f'\nWord limit: {words}\n')
+    print(f'Working on post title\n')
     for index, post in enumerate(hot_posts):
-        print(f"Working on post title - {index+1}/{posts_count}")
+        print(f'{index+1}/{posts}')
         title_tokens = word_tokenize(post.title.lower())
         word_list = [word for word in title_tokens if word not in stoplist and word.isalpha()]
         word_consolidated += word_list
@@ -151,22 +174,10 @@ def scrape_ajax():
         sorted_values.append(counter[word])
 
     print(posts_by_date)
-    return jsonify({    
-        'labels': sorted_keys[-limit:],
-        'data': sorted_values[-limit:]
+    return jsonify({
+        'labels': sorted_keys[-words:],
+        'data': sorted_values[-words:]
         })
 
-# Praw functions ------------------------------------------------------------------------------------------------#
-with open('SuperSecretCredentials.txt', 'r') as file:
-    client_id = file.readline().strip()
-    client_secret = file.readline().strip()
-    user_agent = file.readline().strip()
-
-reddit = praw.Reddit(
-    client_id=client_id,
-    client_secret=client_secret,
-    user_agent=user_agent
-)
-
 if __name__== '__main__':
-    app.run()
+    app.run(debug=True)
