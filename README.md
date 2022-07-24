@@ -11,6 +11,8 @@ If you wish to run this, follow these steps:
   <Your client_id from Reddit>
   <Your client_secret from Reddit>
   <user_agent>
+  
+  <MongoDB URI>
   ```
   These can be found by creating a Reddit account, going to the account preferences section and creating an app (personal script)
   <li>Run "flask_site.py"
