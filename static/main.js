@@ -30,11 +30,38 @@ $(document).ready(function() {
         }
     })
 
+    subreddit.addEventListener("keypress", function(event){
+        if (event.key === 'Enter') {
+            redditScrapeFunction()
+        }
+    })
+
     $('.btn').click(function(){
         redditScrapeFunction()
     })
 
     function redditScrapeFunction(){
+        if ( !$('#subreddit')) {
+            subredditInput = 100
+        }   else {
+            subredditInput = $('#subreddit').val()
+        }
+
+        if ($('#posts').val() >= 100) {
+            subredditInput = 100;
+            $('#posts').val(100)
+        }   else {
+            subredditInput = $('#posts').val()
+        }
+        
+        if ($('#limit').val() >= 30) {
+            subredditInput = 30;
+            $('#limit').val(30)
+
+        }   else {
+            subredditInput = $('#limit').val()
+        }
+
         $.ajax({
             url: '/scrape_ajax',
             method: 'get',

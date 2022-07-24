@@ -126,7 +126,6 @@ def logout():
 def web_app():
     return render_template('app.html')
 
-@app.route('/')  
 @app.route('/about')
 def about():
     return render_template('about.html', title='About')
@@ -151,14 +150,13 @@ def scrape_ajax():
     sorted_keys = []
     sorted_values = []
     word_consolidated = []
-    posts_by_date = {}
 
     input_sub = request.args.get('subreddit_input')
     hot_posts = reddit.subreddit(input_sub).hot(limit=posts)
     stoplist = set(stopwords.words('english') + list(punctuation) + list(digits))
     
     print(f'\nWord limit: {words}\n')
-    print(f'Working on post title\n')
+    print(f'Working on post titles...')
     for index, post in enumerate(hot_posts):
         print(f'{index+1}/{posts}')
         title_tokens = word_tokenize(post.title.lower())
@@ -173,7 +171,6 @@ def scrape_ajax():
         sorted_keys.append(word)
         sorted_values.append(counter[word])
 
-    print(posts_by_date)
     return jsonify({
         'labels': sorted_keys[-words:],
         'data': sorted_values[-words:]
